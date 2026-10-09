@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<!-- saved from url=(0043)https://jessie2864.github.io/Biologie-spel/ -->
+<html lang="nl" class="h-full bg-slate-950 text-slate-100"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skelet Trainer Pro - Biologie &amp; Anatomie Game</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="./index_files/saved_resource"></script>
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+  <link href="./index_files/css2" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* SVG Bone styling */
+    .bone {
+      fill: #cbd5e1;
+      stroke: #334155;
+      stroke-width: 1.5px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      cursor: pointer;
+      transition: fill 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease, transform 0.2s ease;
+      filter: none !important;
+    }
+
+    .bone:hover {
+      fill: #94a3b8;
+      stroke: #0284c7;
+      stroke-width: 2px;
+    }
+
+    /* Target / Highlighted Bone Fill */
+    .bone.highlighted {
+      fill: #00f0b5 !important;
+      stroke: #0284c7 !important;
+      stroke-width: 2.5px !important;
+      filter: none !important;
+    }
+
+    /* Correct Pick Fill */
+    .bone.correct-flash {
+      fill: #10b981 !important;
+      stroke: #047857 !important;
+      stroke-width: 3px !important;
+    }
+
+    /* Wrong Pick Fill */
+    .bone.wrong-flash {
+      fill: #f43f5e !important;
+      stroke: #be123c !important;
+      stroke-width: 3px !important;
+    }
+
+    /* Animated viewBox canvas */
+    #skeleton-svg {
+      transition: viewBox 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: viewBox;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.relative{position:relative}.sticky{position:sticky}.top-0{top:0px}.z-10{z-index:10}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.ml-1{margin-left:0.25rem}.mr-1{margin-right:0.25rem}.mr-2{margin-right:0.5rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-10{height:2.5rem}.h-14{height:3.5rem}.h-16{height:4rem}.h-2{height:0.5rem}.h-3{height:0.75rem}.h-3\.5{height:0.875rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-full{height:100%}.max-h-\[580px\]{max-height:580px}.min-h-\[560px\]{min-height:560px}.w-10{width:2.5rem}.w-14{width:3.5rem}.w-16{width:4rem}.w-2{width:0.5rem}.w-3{width:0.75rem}.w-3\.5{width:0.875rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-fit{width:-moz-fit-content;width:fit-content}.w-full{width:100%}.max-w-7xl{max-width:80rem}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-3\.5{gap:0.875rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-x-hidden{overflow-x:hidden}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-sm{border-radius:0.125rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-y{border-top-width:1px;border-bottom-width:1px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-t{border-top-width:1px}.border-amber-500\/30{border-color:rgb(245 158 11 / 0.3)}.border-amber-500\/40{border-color:rgb(245 158 11 / 0.4)}.border-cyan-400{--tw-border-opacity:1;border-color:rgb(34 211 238 / var(--tw-border-opacity, 1))}.border-cyan-500\/20{border-color:rgb(6 182 212 / 0.2)}.border-cyan-500\/40{border-color:rgb(6 182 212 / 0.4)}.border-cyan-500\/60{border-color:rgb(6 182 212 / 0.6)}.border-emerald-400{--tw-border-opacity:1;border-color:rgb(52 211 153 / var(--tw-border-opacity, 1))}.border-emerald-500\/30{border-color:rgb(16 185 129 / 0.3)}.border-emerald-500\/40{border-color:rgb(16 185 129 / 0.4)}.border-emerald-500\/60{border-color:rgb(16 185 129 / 0.6)}.border-rose-400{--tw-border-opacity:1;border-color:rgb(251 113 133 / var(--tw-border-opacity, 1))}.border-rose-500\/40{border-color:rgb(244 63 94 / 0.4)}.border-rose-500\/60{border-color:rgb(244 63 94 / 0.6)}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.border-slate-700\/60{border-color:rgb(51 65 85 / 0.6)}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.border-slate-800\/60{border-color:rgb(30 41 59 / 0.6)}.border-slate-800\/80{border-color:rgb(30 41 59 / 0.8)}.border-cyan-500\/30{border-color:rgb(6 182 212 / 0.3)}.bg-\[\#00f0b5\]{--tw-bg-opacity:1;background-color:rgb(0 240 181 / var(--tw-bg-opacity, 1))}.bg-amber-500\/10{background-color:rgb(245 158 11 / 0.1)}.bg-amber-500\/20{background-color:rgb(245 158 11 / 0.2)}.bg-cyan-500\/10{background-color:rgb(6 182 212 / 0.1)}.bg-cyan-500\/20{background-color:rgb(6 182 212 / 0.2)}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-emerald-500\/20{background-color:rgb(16 185 129 / 0.2)}.bg-rose-500\/20{background-color:rgb(244 63 94 / 0.2)}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-800\/80{background-color:rgb(30 41 59 / 0.8)}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-slate-900\/90{background-color:rgb(15 23 42 / 0.9)}.bg-slate-950{--tw-bg-opacity:1;background-color:rgb(2 6 23 / var(--tw-bg-opacity, 1))}.bg-slate-950\/40{background-color:rgb(2 6 23 / 0.4)}.bg-slate-950\/80{background-color:rgb(2 6 23 / 0.8)}.bg-emerald-500\/10{background-color:rgb(16 185 129 / 0.1)}.bg-purple-500\/20{background-color:rgb(168 85 247 / 0.2)}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.bg-gradient-to-tr{background-image:linear-gradient(to top right, var(--tw-gradient-stops))}.from-cyan-400{--tw-gradient-from:#22d3ee var(--tw-gradient-from-position);--tw-gradient-to:rgb(34 211 238 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-cyan-500{--tw-gradient-from:#06b6d4 var(--tw-gradient-from-position);--tw-gradient-to:rgb(6 182 212 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-400{--tw-gradient-from:#34d399 var(--tw-gradient-from-position);--tw-gradient-to:rgb(52 211 153 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-rose-500{--tw-gradient-from:#f43f5e var(--tw-gradient-from-position);--tw-gradient-to:rgb(244 63 94 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-cyan-400{--tw-gradient-to:rgb(34 211 238 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #22d3ee var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-amber-500{--tw-gradient-to:#f59e0b var(--tw-gradient-to-position)}.to-blue-400{--tw-gradient-to:#60a5fa var(--tw-gradient-to-position)}.to-blue-500{--tw-gradient-to:#3b82f6 var(--tw-gradient-to-position)}.to-emerald-400{--tw-gradient-to:#34d399 var(--tw-gradient-to-position)}.bg-clip-text{-webkit-background-clip:text;background-clip:text}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-3\.5{padding:0.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pb-3{padding-bottom:0.75rem}.pb-4{padding-bottom:1rem}.pl-4{padding-left:1rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.text-\[\#00f0b5\]{--tw-text-opacity:1;color:rgb(0 240 181 / var(--tw-text-opacity, 1))}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-amber-400\/90{color:rgb(251 191 36 / 0.9)}.text-cyan-300{--tw-text-opacity:1;color:rgb(103 232 249 / var(--tw-text-opacity, 1))}.text-cyan-400{--tw-text-opacity:1;color:rgb(34 211 238 / var(--tw-text-opacity, 1))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-rose-300{--tw-text-opacity:1;color:rgb(253 164 175 / var(--tw-text-opacity, 1))}.text-rose-400{--tw-text-opacity:1;color:rgb(251 113 133 / var(--tw-text-opacity, 1))}.text-rose-400\/90{color:rgb(251 113 133 / 0.9)}.text-slate-100{--tw-text-opacity:1;color:rgb(241 245 249 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-950{--tw-text-opacity:1;color:rgb(2 6 23 / var(--tw-text-opacity, 1))}.text-transparent{color:transparent}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-purple-300{--tw-text-opacity:1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.decoration-cyan-500\/50{-webkit-text-decoration-color:rgb(6 182 212 / 0.5);text-decoration-color:rgb(6 182 212 / 0.5)}.underline-offset-4{text-underline-offset:4px}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-cyan-500\/10{--tw-shadow-color:rgb(6 182 212 / 0.1);--tw-shadow:var(--tw-shadow-colored)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.duration-300{transition-duration:300ms}.hover\:scale-\[1\.02\]:hover{--tw-scale-x:1.02;--tw-scale-y:1.02;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:bg-emerald-400:hover{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-800:hover{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:brightness-110:hover{--tw-brightness:brightness(1.1);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.focus\:border-cyan-500:focus{--tw-border-opacity:1;border-color:rgb(6 182 212 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.active\:scale-\[0\.98\]:active{--tw-scale-x:0.98;--tw-scale-y:0.98;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@media (min-width: 640px){.sm\:flex{display:flex}.sm\:hidden{display:none}.sm\:w-auto{width:auto}.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}.sm\:p-6{padding:1.5rem}.sm\:text-2xl{font-size:1.5rem;line-height:2rem}.sm\:text-3xl{font-size:1.875rem;line-height:2.25rem}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}@media (min-width: 1024px){.lg\:col-span-5{grid-column:span 5 / span 5}.lg\:col-span-7{grid-column:span 7 / span 7}.lg\:min-h-\[680px\]{min-height:680px}.lg\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}}</style></head>
+<body class="h-full flex flex-col overflow-x-hidden text-slate-100 bg-slate-950">
+
+  <!-- Top Bar / Header -->
+  <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur sticky top-0 z-50 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center justify-between w-full sm:w-auto">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-cyan-500/10">
+            <svg class="w-6 h-6 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">
+              Skelet Trainer Pro
+            </h1>
+            <p class="text-xs text-slate-400 font-medium">Anatomie Level Progressie Modus</p>
+          </div>
+        </div>
+
+        <!-- Audio Toggle Button Mobile -->
+        <button id="sound-toggle-btn" onclick="toggleAudio()" class="sm:hidden p-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-700">
+          🔊
+        </button>
+      </div>
+
+      <!-- Navigation Tabs with Level Progression Indicators -->
+      <nav class="flex p-1 bg-slate-800/80 rounded-xl border border-slate-700/60 w-full sm:w-auto overflow-x-auto text-xs sm:text-sm font-semibold gap-1">
+        <button id="tab-btn-quiz" onclick="switchTab('quiz')" class="flex-1 px-3 py-2 rounded-lg transition duration-200 flex items-center justify-center gap-1.5 bg-emerald-500 text-slate-950 shadow">
+          <span>🧠</span> <span>Lvl 1: Quiz</span>
+        </button>
+        <button id="tab-btn-pinpoint" onclick="switchTab('pinpoint')" class="flex-1 px-3 py-2 rounded-lg transition duration-200 flex items-center justify-center gap-1.5 text-slate-400 hover:text-white relative">
+          <span id="level2-lock-icon">🔒</span> <span>Lvl 2: Aanwijzen</span>
+        </button>
+        <button id="tab-btn-explore" onclick="switchTab('explore')" class="flex-1 px-3 py-2 rounded-lg transition duration-200 flex items-center justify-center gap-1.5 text-slate-300 hover:text-white">
+          <span>🔍</span> Verkennen
+        </button>
+        <button id="tab-btn-tips" onclick="switchTab('tips')" class="flex-1 px-3 py-2 rounded-lg transition duration-200 flex items-center justify-center gap-1.5 text-slate-300 hover:text-white">
+          <span>💡</span> Tips
+        </button>
+      </nav>
+
+      <!-- Desktop Audio Toggle -->
+      <button id="sound-toggle-desktop" onclick="toggleAudio()" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition">
+        <span id="sound-icon">🔊</span> Geluid: <span id="sound-status" class="text-emerald-400">AAN</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Layout Grid -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    
+    <!-- LEFT PANEL: SVG Skeleton Canvas -->
+    <section class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-between min-h-[560px] lg:min-h-[680px] relative shadow-2xl overflow-hidden">
+      
+      <!-- Top Canvas Controls & Zoom Buttons -->
+      <div class="w-full flex flex-wrap items-center justify-between gap-2 z-10 mb-1">
+        <div class="flex items-center gap-1.5">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse"></span>
+            <span id="skeleton-status-label">21 Botten Interactief</span>
+          </span>
+        </div>
+
+        <!-- Manual Zoom Controls -->
+        <div class="flex items-center gap-1">
+          <button onclick="manualZoom(0.8)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-bold transition" title="Inzoomen">+</button>
+          <button onclick="manualZoom(1.25)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-bold transition" title="Uitzoomen">-</button>
+          <button onclick="resetZoom()" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1" title="Herstel Zoom">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+            Herstel
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Anatomical Region Zoom Buttons -->
+      <div class="w-full flex items-center justify-center gap-1 flex-wrap z-10 mb-2 py-1 border-y border-slate-800/80 bg-slate-950/40">
+        <span class="text-[10px] uppercase font-bold text-slate-400 mr-1">Focus:</span>
+        <button onclick="zoomToRegion('hoofd')" class="px-2 py-0.5 text-[11px] font-medium rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Hoofd</button>
+        <button onclick="zoomToRegion('borstkas')" class="px-2 py-0.5 text-[11px] font-medium rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Borstkas</button>
+        <button onclick="zoomToRegion('wervelkolom')" class="px-2 py-0.5 text-[11px] font-medium rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Wervelkolom</button>
+        <button onclick="zoomToRegion('armhand')" class="px-2 py-0.5 text-[11px] font-medium rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Arm/Hand</button>
+        <button onclick="zoomToRegion('bekkenbeen')" class="px-2 py-0.5 text-[11px] font-medium rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Bekken/Benen</button>
+      </div>
+
+      <!-- Interactive SVG Skeleton Container -->
+      <div class="w-full h-full flex-1 flex items-center justify-center relative">
+        <svg id="skeleton-svg" viewBox="110 540 180 180" class="w-full h-full max-h-[580px]">
+
+          <!-- Skeleton Central Group -->
+          <g id="skeleton-group">
+            
+            <!-- 1. SCHEDEL -->
+            <g id="bone-schedel" class="bone-group" onclick="handleBoneClick('schedel')" data-name="Schedel">
+              <path class="bone" d="M 160 80 C 160 30, 240 30, 240 80 C 240 100, 225 115, 220 120 L 180 120 C 175 115, 160 100, 160 80 Z"></path>
+              <path class="bone" d="M 170 120 L 230 120 L 220 135 L 180 135 Z"></path>
+              <ellipse cx="182" cy="78" rx="8" ry="10" fill="#0f172a"></ellipse>
+              <ellipse cx="218" cy="78" rx="8" ry="10" fill="#0f172a"></ellipse>
+              <polygon points="200,88 194,102 206,102" fill="#0f172a"></polygon>
+            </g>
+
+            <!-- 2. HALSWERVELS -->
+            <g id="bone-halswervels" class="bone-group" onclick="handleBoneClick('halswervels')" data-name="Halswervels">
+              <rect class="bone" x="190" y="137" width="20" height="4" rx="1"></rect>
+              <rect class="bone" x="189" y="143" width="22" height="4" rx="1"></rect>
+              <rect class="bone" x="189" y="149" width="22" height="4" rx="1"></rect>
+              <rect class="bone" x="188" y="155" width="24" height="4" rx="1"></rect>
+              <rect class="bone" x="188" y="161" width="24" height="4" rx="1"></rect>
+              <rect class="bone" x="187" y="167" width="26" height="4" rx="1"></rect>
+              <rect class="bone" x="187" y="173" width="26" height="5" rx="1"></rect>
+            </g>
+
+            <!-- 3. SLEUTELBEEN -->
+            <g id="bone-sleutelbeen" class="bone-group" onclick="handleBoneClick('sleutelbeen')" data-name="Sleutelbeen">
+              <path class="bone" d="M 200 178 C 175 174, 150 162, 132 170 C 130 172, 132 176, 136 176 C 155 170, 175 180, 200 181 Z"></path>
+              <path class="bone" d="M 200 178 C 225 174, 250 162, 268 170 C 270 172, 268 176, 264 176 C 245 170, 225 180, 200 181 Z"></path>
+            </g>
+
+            <!-- 4. SCHOUDERBLAD -->
+            <g id="bone-schouderblad" class="bone-group" onclick="handleBoneClick('schouderblad')" data-name="Schouderblad">
+              <path class="bone" d="M 130 175 L 115 185 L 138 225 L 146 190 Z"></path>
+              <path class="bone" d="M 270 175 L 285 185 L 262 225 L 254 190 Z"></path>
+            </g>
+
+            <!-- 5. BORSTWERVELS -->
+            <g id="bone-borstwervels" class="bone-group" onclick="handleBoneClick('borstwervels')" data-name="Borstwervels">
+              <rect class="bone" x="187" y="180" width="26" height="6" rx="1"></rect>
+              <rect class="bone" x="187" y="188" width="26" height="6" rx="1"></rect>
+              <rect class="bone" x="186" y="196" width="28" height="6" rx="1"></rect>
+              <rect class="bone" x="186" y="204" width="28" height="6" rx="1"></rect>
+              <rect class="bone" x="186" y="212" width="28" height="6" rx="1"></rect>
+              <rect class="bone" x="185" y="220" width="30" height="6" rx="1"></rect>
+              <rect class="bone" x="185" y="228" width="30" height="6" rx="1"></rect>
+              <rect class="bone" x="185" y="236" width="30" height="6" rx="1"></rect>
+              <rect class="bone" x="184" y="244" width="32" height="6" rx="1"></rect>
+              <rect class="bone" x="184" y="252" width="32" height="6" rx="1"></rect>
+              <rect class="bone" x="184" y="260" width="32" height="6" rx="1"></rect>
+              <rect class="bone" x="183" y="268" width="34" height="6" rx="1"></rect>
+            </g>
+
+            <!-- 6. RIBBEN -->
+            <g id="bone-ribben" class="bone-group" onclick="handleBoneClick('ribben')" data-name="Ribben">
+              <path class="bone" d="M 188 185 C 150 185, 135 200, 192 205" fill="none"></path>
+              <path class="bone" d="M 188 193 C 145 195, 130 215, 192 218" fill="none"></path>
+              <path class="bone" d="M 187 201 C 140 205, 125 230, 192 231" fill="none"></path>
+              <path class="bone" d="M 187 209 C 138 215, 122 242, 192 244" fill="none"></path>
+              <path class="bone" d="M 186 217 C 135 225, 120 255, 192 257" fill="none"></path>
+              <path class="bone" d="M 186 225 C 135 235, 122 265, 192 268" fill="none"></path>
+              <path class="bone" d="M 212 185 C 250 185, 265 200, 208 205" fill="none"></path>
+              <path class="bone" d="M 212 193 C 255 195, 270 215, 208 218" fill="none"></path>
+              <path class="bone" d="M 213 201 C 260 205, 275 230, 208 231" fill="none"></path>
+              <path class="bone" d="M 213 209 C 262 215, 278 242, 208 244" fill="none"></path>
+              <path class="bone" d="M 214 217 C 265 225, 280 255, 208 257" fill="none"></path>
+              <path class="bone" d="M 214 225 C 265 235, 278 265, 208 268" fill="none"></path>
+            </g>
+
+            <!-- 7. BORSTBEEN -->
+            <g id="bone-borstbeen" class="bone-group" onclick="handleBoneClick('borstbeen')" data-name="Borstbeen">
+              <path class="bone" d="M 194 180 L 206 180 L 204 250 L 200 262 L 196 250 Z"></path>
+            </g>
+
+            <!-- 8. LENDEWERVELS -->
+            <g id="bone-lendewervels" class="bone-group" onclick="handleBoneClick('lendewervels')" data-name="Lendewervels">
+              <rect class="bone" x="182" y="277" width="36" height="8" rx="2"></rect>
+              <rect class="bone" x="181" y="287" width="38" height="8" rx="2"></rect>
+              <rect class="bone" x="180" y="297" width="40" height="9" rx="2"></rect>
+              <rect class="bone" x="179" y="308" width="42" height="9" rx="2"></rect>
+              <rect class="bone" x="178" y="319" width="44" height="10" rx="2"></rect>
+            </g>
+
+            <!-- 9. HEUPBEEN -->
+            <g id="bone-heupbeen" class="bone-group" onclick="handleBoneClick('heupbeen')" data-name="Heupbeen">
+              <path class="bone" d="M 175 328 C 140 320, 125 350, 138 385 C 145 400, 170 410, 182 395 C 185 375, 178 345, 175 328 Z"></path>
+              <path class="bone" d="M 225 328 C 260 320, 275 350, 262 385 C 255 400, 230 410, 218 395 C 215 375, 222 345, 225 328 Z"></path>
+            </g>
+
+            <!-- 10. HEILIGBEEN -->
+            <g id="bone-heiligbeen" class="bone-group" onclick="handleBoneClick('heiligbeen')" data-name="Heiligbeen">
+              <path class="bone" d="M 180 330 L 220 330 L 210 380 L 190 380 Z"></path>
+              <circle cx="192" cy="345" r="2" fill="#0f172a"></circle>
+              <circle cx="208" cy="345" r="2" fill="#0f172a"></circle>
+              <circle cx="194" cy="360" r="1.8" fill="#0f172a"></circle>
+              <circle cx="206" cy="360" r="1.8" fill="#0f172a"></circle>
+            </g>
+
+            <!-- 11. STAARTBEEN -->
+            <g id="bone-staartbeen" class="bone-group" onclick="handleBoneClick('staartbeen')" data-name="Staartbeen">
+              <path class="bone" d="M 192 381 L 208 381 L 203 400 L 197 400 Z"></path>
+            </g>
+
+            <!-- 12. OPPERARMBEEN -->
+            <g id="bone-opperarmbeen" class="bone-group" onclick="handleBoneClick('opperarmbeen')" data-name="Opperarmbeen">
+              <path class="bone" d="M 124 186 C 118 186, 114 195, 118 200 L 108 275 C 104 280, 116 288, 120 280 L 128 200 C 132 195, 128 186, 124 186 Z"></path>
+              <path class="bone" d="M 276 186 C 282 186, 286 195, 282 200 L 292 275 C 296 280, 284 288, 280 280 L 272 200 C 268 195, 272 186, 276 186 Z"></path>
+            </g>
+
+            <!-- 13. SPAAKBEEN -->
+            <g id="bone-spaakbeen" class="bone-group" onclick="handleBoneClick('spaakbeen')" data-name="Spaakbeen">
+              <path class="bone" d="M 106 284 L 90 350 L 97 352 L 112 286 Z"></path>
+              <path class="bone" d="M 294 284 L 310 350 L 303 352 L 288 286 Z"></path>
+            </g>
+
+            <!-- 14. ELLEPIJP -->
+            <g id="bone-ellepijp" class="bone-group" onclick="handleBoneClick('ellepijp')" data-name="Ellepijp">
+              <path class="bone" d="M 115 284 L 100 350 L 106 352 L 121 286 Z"></path>
+              <path class="bone" d="M 285 284 L 300 350 L 294 352 L 279 286 Z"></path>
+            </g>
+
+            <!-- 15. HANDWORTELBEENTJES -->
+            <g id="bone-handwortelbeentjes" class="bone-group" onclick="handleBoneClick('handwortelbeentjes')" data-name="Handwortelbeentjes">
+              <rect class="bone" x="88" y="353" width="9" height="6" rx="2"></rect>
+              <rect class="bone" x="98" y="353" width="9" height="6" rx="2"></rect>
+              <rect class="bone" x="87" y="360" width="10" height="6" rx="2"></rect>
+              <rect class="bone" x="98" y="360" width="10" height="6" rx="2"></rect>
+              <rect class="bone" x="293" y="353" width="9" height="6" rx="2"></rect>
+              <rect class="bone" x="303" y="353" width="9" height="6" rx="2"></rect>
+              <rect class="bone" x="292" y="360" width="10" height="6" rx="2"></rect>
+              <rect class="bone" x="303" y="360" width="10" height="6" rx="2"></rect>
+            </g>
+
+            <!-- 16. MIDDENHANDSBEENTJES -->
+            <g id="bone-middenhandsbeentjes" class="bone-group" onclick="handleBoneClick('middenhandsbeentjes')" data-name="Middenhandsbeentjes">
+              <path class="bone" d="M 86 368 L 70 382 L 75 388 L 89 373 Z"></path>
+              <path class="bone" d="M 314 368 L 330 382 L 325 388 L 311 373 Z"></path>
+              <path class="bone" d="M 86 368 L 108 370 L 104 395 L 82 392 Z"></path>
+              <path class="bone" d="M 314 368 L 292 370 L 296 395 L 318 392 Z"></path>
+            </g>
+
+            <!-- 17. VINGERKOOTJES -->
+            <g id="bone-vingerkootjes" class="bone-group" onclick="handleBoneClick('vingerkootjes')" data-name="Vingerkootjes">
+              <path class="bone" d="M 70 382 L 58 402 L 63 405 L 74 387 Z"></path>
+              <path class="bone" d="M 330 382 L 342 402 L 337 405 L 326 387 Z"></path>
+              <path class="bone" d="M 82 394 L 78 425 L 83 425 L 87 395 Z"></path>
+              <path class="bone" d="M 88 395 L 86 430 L 91 430 L 93 396 Z"></path>
+              <path class="bone" d="M 94 396 L 94 432 L 99 432 L 99 396 Z"></path>
+              <path class="bone" d="M 100 396 L 103 424 L 107 424 L 103 395 Z"></path>
+              <path class="bone" d="M 318 394 L 322 425 L 317 425 L 313 395 Z"></path>
+              <path class="bone" d="M 312 395 L 314 430 L 309 430 L 307 396 Z"></path>
+              <path class="bone" d="M 306 396 L 306 432 L 301 432 L 301 396 Z"></path>
+              <path class="bone" d="M 300 396 L 297 424 L 293 424 L 297 395 Z"></path>
+            </g>
+
+            <!-- 18. DIJBEEN -->
+            <g id="bone-dijbeen" class="bone-group" onclick="handleBoneClick('dijbeen')" data-name="Dijbeen">
+              <path class="bone" d="M 152 390 C 145 390, 142 400, 148 405 L 140 535 C 135 545, 155 550, 160 540 L 165 405 C 170 395, 160 390, 152 390 Z"></path>
+              <path class="bone" d="M 248 390 C 255 390, 258 400, 252 405 L 260 535 C 265 545, 245 550, 240 540 L 235 405 C 230 395, 240 390, 248 390 Z"></path>
+            </g>
+
+            <!-- 19. KNIESCHIJF -->
+            <g id="bone-knieschijf" class="bone-group" onclick="handleBoneClick('knieschijf')" data-name="Knieschijf">
+              <ellipse class="bone" cx="150" cy="542" rx="9" ry="8"></ellipse>
+              <ellipse class="bone" cx="250" cy="542" rx="9" ry="8"></ellipse>
+            </g>
+
+            <!-- 20. SCHEENBEEN -->
+            <g id="bone-scheenbeen" class="bone-group" onclick="handleBoneClick('scheenbeen')" data-name="Scheenbeen">
+              <path class="bone" d="M 142 552 L 158 552 L 152 705 L 138 705 Z"></path>
+              <path class="bone" d="M 258 552 L 242 552 L 248 705 L 262 705 Z"></path>
+            </g>
+
+            <!-- 21. KUITBEEN -->
+            <g id="bone-kuitbeen" class="bone-group" onclick="handleBoneClick('kuitbeen')" data-name="Kuitbeen">
+              <path class="bone highlighted" d="M 136 558 L 142 558 L 134 703 L 129 703 Z"></path>
+              <path class="bone highlighted" d="M 264 558 L 258 558 L 266 703 L 271 703 Z"></path>
+            </g>
+
+          </g>
+        </svg>
+      </div>
+
+      <!-- Bottom Highlight Legend Notice -->
+      <div class="w-full text-center mt-2 py-1.5 px-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-center gap-2">
+        <span class="w-3 h-3 rounded-sm border border-cyan-400 bg-[#00f0b5]"></span>
+        <span class="text-xs text-slate-300 font-medium">Ingekleurd bot komt overeen met de actieve vraag</span>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: Tab Viewport -->
+    <section class="lg:col-span-7 flex flex-col gap-6">
+
+      <!-- TAB 1: LEVEL 1 - QUIZ MODUS -->
+      <div id="tab-content-quiz" class="space-y-6">
+        
+        <!-- Scoreboard Card & Level 1 Progress -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">Level 1</span>
+                <p class="text-xs uppercase tracking-wider text-slate-400 font-bold">Botten Beheerst</p>
+              </div>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span id="quiz-mastered-count" class="text-3xl font-extrabold text-emerald-400">0</span>
+                <span class="text-sm text-slate-400">/ 21 unieke botten goed</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <!-- Levens Display -->
+              <div class="text-right">
+                <p class="text-xs uppercase tracking-wider text-rose-400 font-bold flex items-center justify-end gap-1">
+                  💀 Levens
+                </p>
+                <div id="quiz-lives" class="text-xl font-bold mt-0.5 tracking-wider flex items-center justify-end gap-1">💀💀💀</div>
+              </div>
+
+              <div class="text-right border-l border-slate-800 pl-4">
+                <p class="text-xs uppercase tracking-wider text-amber-400/90 font-bold flex items-center justify-end gap-1">
+                  🔥 Streak
+                </p>
+                <p id="quiz-streak" class="text-xl font-bold text-amber-400 mt-0.5">0</p>
+              </div>
+
+              <!-- Mistakes Review Counter -->
+              <div class="text-right border-l border-slate-800 pl-4">
+                <p class="text-xs uppercase tracking-wider text-rose-400/90 font-bold flex items-center justify-end gap-1">
+                  ⚠️ Herhalen
+                </p>
+                <p id="quiz-mistakes-count" class="text-xl font-bold text-rose-400 mt-0.5">0</p>
+              </div>
+
+              <button onclick="restartQuiz()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition ml-1" title="Herstart Level 1">
+                🔄
+              </button>
+            </div>
+          </div>
+
+          <!-- Quiz Mode Selector Toggle (Adaptive vs Random) -->
+          <div class="pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+              💡 Quiz Strategie:
+            </span>
+            <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+              <button id="mode-btn-adaptive" onclick="setQuizMode('adaptive')" class="px-3 py-1 rounded-lg text-xs font-bold transition bg-emerald-500 text-slate-950 shadow">
+                🧠 Slim Herhalen
+              </button>
+              <button id="mode-btn-random" onclick="setQuizMode('random')" class="px-3 py-1 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">
+                🎲 Willekeurig
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Box -->
+        <div id="quiz-question-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6 relative">
+          
+          <!-- Repeat Badge Notice -->
+          <div id="repeat-notice-badge" class="hidden items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-bold w-fit">
+            ⚠️ Herhaalvraag (Eerder fout beantwoord)
+          </div>
+
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-semibold">
+              <span class="w-2 h-2 rounded-full bg-[#00f0b5]"></span>
+              Vraag <span id="question-number">1</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold text-white">
+              Welk bot is op de afbeelding <span class="text-[#00f0b5] underline decoration-cyan-500/50 underline-offset-4">groen</span> gekleurd?
+            </h2>
+            <p class="text-xs text-slate-400">Bekijk het uitgelichte bot op de kaart en kies de juiste optie.</p>
+          </div>
+
+          <!-- Answer Option Buttons Grid -->
+          <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"><button class="w-full text-left p-4 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-100 font-bold transition flex items-center justify-between group"><span>Scheenbeen</span></button><button class="w-full text-left p-4 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-100 font-bold transition flex items-center justify-between group"><span>Heiligbeen</span></button><button class="w-full text-left p-4 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-100 font-bold transition flex items-center justify-between group"><span>Borstbeen</span></button><button class="w-full text-left p-4 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-100 font-bold transition flex items-center justify-between group"><span>Kuitbeen</span></button></div>
+
+          <!-- Question Feedback Banner -->
+          <div id="quiz-feedback" class="hidden p-4 rounded-xl border font-medium text-sm transition-all duration-300 flex items-center gap-3">
+            <div id="feedback-icon" class="w-6 h-6 rounded-full flex items-center justify-center shrink-0 font-bold text-slate-950"></div>
+            <div id="feedback-text"></div>
+          </div>
+        </div>
+
+        <!-- Game Over Card -->
+        <div id="quiz-gameover-card" class="hidden bg-slate-900 border-2 border-rose-500/60 rounded-2xl p-6 shadow-2xl text-center space-y-4">
+          <div class="w-16 h-16 rounded-full bg-rose-500/20 border-2 border-rose-400 flex items-center justify-center mx-auto text-rose-400 text-2xl font-bold">
+            💀
+          </div>
+          <div>
+            <h3 class="text-2xl font-extrabold text-rose-400">Game Over!</h3>
+            <p class="text-sm text-slate-300 mt-1">Je bent al je 3 levens kwijtgeraakt. Probeer het opnieuw om Level 1 te halen!</p>
+          </div>
+          <button onclick="restartQuiz()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 text-slate-950 font-extrabold shadow-lg transition hover:brightness-110">
+            Opnieuw Proberen 🔄
+          </button>
+        </div>
+
+        <!-- Level 1 Completion Card & Unlock Level 2 Button -->
+        <div id="quiz-completion-card" class="hidden bg-slate-900 border-2 border-emerald-500/60 rounded-2xl p-6 shadow-2xl text-center space-y-5 animate-bounce-short">
+          <div class="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center mx-auto text-emerald-400 text-3xl font-bold">
+            🏆
+          </div>
+          <div class="space-y-2">
+            <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-extrabold border border-emerald-500/40 uppercase">LEVEL 1 VOLTOOID!</span>
+            <h3 class="text-2xl font-black text-emerald-400">Gefeliciteerd! 🎉</h3>
+            <p class="text-sm text-slate-300 leading-relaxed max-w-md mx-auto">
+              Je hebt alle <strong>21 VWO botten &amp; wervels</strong> minstens 1 keer goed beantwoord in de Quiz!
+            </p>
+          </div>
+
+          <div class="pt-2">
+            <button onclick="unlockAndStartLevel2()" class="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 text-slate-950 font-black text-lg shadow-xl hover:scale-[1.02] active:scale-[0.98] transition flex items-center justify-center gap-2">
+              <span>Ga naar Level 2: Aanwijzen 🎯</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: LEVEL 2 - AANWIJS GAME (Pinpoint Mode) -->
+      <div id="tab-content-pinpoint" class="hidden space-y-6">
+        
+        <!-- Locked Level 2 Notice (If opened before Level 1 is finished) -->
+        <div id="level2-locked-card" class="hidden bg-slate-900 border-2 border-amber-500/40 rounded-2xl p-6 shadow-xl text-center space-y-4">
+          <div class="w-14 h-14 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center mx-auto text-amber-400 text-2xl font-bold">
+            🔒
+          </div>
+          <div>
+            <h3 class="text-xl font-extrabold text-amber-400">Level 2 is nog Vergrendeld!</h3>
+            <p class="text-sm text-slate-300 mt-1 max-w-md mx-auto">
+              Haal eerst <strong>Level 1 (Quiz Modus)</strong> door alle 21 botten minstens 1 keer goed te beantwoorden.
+            </p>
+          </div>
+          <button onclick="switchTab('quiz')" class="py-2.5 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition">
+            Speel Level 1 Quiz 🧠
+          </button>
+        </div>
+
+        <!-- Active Level 2 Game Viewport -->
+        <div id="level2-active-card" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div>
+              <span class="px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 font-bold text-xs border border-cyan-500/20">Level 2 Challenge</span>
+              <h2 class="text-xl font-extrabold text-white mt-1">Klik op het juiste bot!</h2>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400 block uppercase font-bold">Level 2 Voortgang</span>
+              <span class="text-xl font-black text-emerald-400">
+                <span id="pinpoint-found-count">0</span> / 21 botten
+              </span>
+            </div>
+          </div>
+
+          <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 text-center space-y-2 shadow-inner">
+            <p class="text-xs uppercase tracking-wider font-bold text-slate-400">Zoek en klik direct op het skelet:</p>
+            <h3 id="pinpoint-target-name" class="text-2xl sm:text-3xl font-black text-cyan-400 tracking-wide">...</h3>
+            <p id="pinpoint-hint" class="text-xs text-slate-400 italic">Klik op de SVG-tekening aan de linkerkant!</p>
+          </div>
+
+          <div id="pinpoint-feedback" class="hidden p-3.5 rounded-xl text-xs font-bold text-center transition"></div>
+        </div>
+
+        <!-- Level 2 Completion Card -->
+        <div id="level2-completion-card" class="hidden bg-slate-900 border-2 border-cyan-500/60 rounded-2xl p-6 shadow-2xl text-center space-y-4">
+          <div class="w-16 h-16 rounded-full bg-cyan-500/20 border-2 border-cyan-400 flex items-center justify-center mx-auto text-cyan-300 text-3xl font-bold">
+            👑
+          </div>
+          <div class="space-y-2">
+            <span class="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-extrabold border border-cyan-500/40 uppercase">LEVEL 2 VOLTOOID!</span>
+            <h3 class="text-2xl font-black text-cyan-400">Anatomie Master! 🎓</h3>
+            <p class="text-sm text-slate-300 leading-relaxed max-w-md mx-auto">
+              Je hebt alle 21 VWO botten zowel in de Quiz als op het skelet vlekkeloos aan kunnen wijzen!
+            </p>
+          </div>
+          <button onclick="restartLevel2()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-extrabold shadow-lg hover:brightness-110 transition">
+            Level 2 Herhalen 🎯
+          </button>
+        </div>
+
+      </div>
+
+      <!-- TAB 3: SKELET VERKENNEN -->
+      <div id="tab-content-explore" class="hidden space-y-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              🔍 Klik op een bot of kies uit de lijst
+            </h2>
+          </div>
+          
+          <!-- Bone Selector Dropdown -->
+          <select id="explore-select" onchange="handleExploreSelect(this.value)" class="w-full bg-slate-950 border border-slate-700 text-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 font-medium">
+            <option value="">-- Kies een bot uit de 21 VWO botten --</option>
+          <option value="schedel">Schedel (Cranium)</option><option value="halswervels">Halswervels (Vertebrae cervicales (C1-C7))</option><option value="sleutelbeen">Sleutelbeen (Clavicula)</option><option value="schouderblad">Schouderblad (Scapula)</option><option value="borstwervels">Borstwervels (Vertebrae thoracicae (T1-T12))</option><option value="ribben">Ribben (Costae)</option><option value="borstbeen">Borstbeen (Sternum)</option><option value="lendewervels">Lendewervels (Vertebrae lumbales (L1-L5))</option><option value="heupbeen">Heupbeen (Os coxae)</option><option value="heiligbeen">Heiligbeen (Os sacrum)</option><option value="staartbeen">Staartbeen (Os coccygis)</option><option value="opperarmbeen">Opperarmbeen (Humerus)</option><option value="spaakbeen">Spaakbeen (Radius)</option><option value="ellepijp">Ellepijp (Ulna)</option><option value="handwortelbeentjes">Handwortelbeentjes (Ossa carpi (8 stuks))</option><option value="middenhandsbeentjes">Middenhandsbeentjes (Ossa metacarpi (5 stuks))</option><option value="vingerkootjes">Vingerkootjes (Phalanges manus)</option><option value="dijbeen">Dijbeen (Femur)</option><option value="knieschijf">Knieschijf (Patella)</option><option value="scheenbeen">Scheenbeen (Tibia)</option><option value="kuitbeen">Kuitbeen (Fibula)</option></select>
+
+          <!-- Detail Card Display -->
+          <div id="explore-card" class="bg-slate-950/80 border border-slate-800 rounded-xl p-5 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 id="explore-bone-title" class="text-2xl font-extrabold text-[#00f0b5]">Selecteer een bot</h3>
+                <span id="explore-bone-category" class="inline-block px-2 py-0.5 mt-1 text-[11px] font-semibold bg-slate-800 text-slate-300 rounded border border-slate-700">Categorie</span>
+              </div>
+              <span id="explore-bone-latin" class="text-xs font-mono text-slate-400 italic">...</span>
+            </div>
+            
+            <div class="space-y-3 text-sm text-slate-300">
+              <div>
+                <strong class="text-slate-100 block text-xs uppercase tracking-wider text-slate-400 mb-1">Locatie &amp; Functie:</strong>
+                <p id="explore-bone-desc" class="text-slate-300">Klik op een onderdeel op de svg-tekening om anatomische details te bekijken.</p>
+              </div>
+              <div class="pt-2 border-t border-slate-800/60">
+                <strong class="text-amber-400 block text-xs uppercase tracking-wider mb-1">Geheugensteun / Onthoudtip:</strong>
+                <p id="explore-bone-tip" class="text-slate-400 italic">Selecteer een bot om de biologietip te lezen.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 21 Bones Quick Grid Buttons -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          <h3 class="text-xs uppercase tracking-wider font-bold text-slate-400 mb-3">Alle 21 VWO Botten Snelkeuze</h3>
+          <div id="explore-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2"><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Schedel</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Halswervels</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Sleutelbeen</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Schouderblad</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Borstwervels</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Ribben</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Borstbeen</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Lendewervels</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Heupbeen</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Heiligbeen</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Staartbeen</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Opperarmbeen</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Spaakbeen</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Ellepijp</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Handwortelbeentjes</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Middenhandsbeentjes</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Vingerkootjes</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Dijbeen</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Knieschijf</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Scheenbeen</button><button class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate">Kuitbeen</button></div>
+        </div>
+      </div>
+
+      <!-- TAB 4: EZELSBRUGGETJES -->
+      <div id="tab-content-tips" class="hidden space-y-4">
+        
+        <!-- Spine 7-12-5 Rule -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-lg">
+              7-12-5
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-lg">Wervelkolom Eettijden Regel</h3>
+              <p class="text-xs text-amber-400 font-semibold">Onthoud de wervelaantallen via je maaltijden!</p>
+            </div>
+          </div>
+          <ul class="space-y-2 text-xs text-slate-300">
+            <li class="flex items-center gap-2 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">7 uur</span>
+              <span><strong>Halswervels (7):</strong> Ontbijten om 07:00 uur (Cervicaal C1-C7)</span>
+            </li>
+            <li class="flex items-center gap-2 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+              <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold">12 uur</span>
+              <span><strong>Borstwervels (12):</strong> Lunchen om 12:00 uur (Thoracaal T1-T12)</span>
+            </li>
+            <li class="flex items-center gap-2 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+              <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold">5 uur</span>
+              <span><strong>Lendewervels (5):</strong> Avondeten om 17:00 uur (Lumbaal L1-L5)</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Thumb Rule Radius vs Ulna -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold text-lg">
+              👍
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-lg">Spaakbeen vs Ellepijp</h3>
+              <p class="text-xs text-cyan-400 font-semibold">Onderscheid de onderarmbotten feilloos</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed bg-slate-950 p-3 rounded-lg border border-slate-800">
+            <strong>Spaakbeen (Radius):</strong> Loopt naar de <em>duimzijde</em> (denk aan je spaakwiel / stuur vastgrijpen met je duim aan de buitenkant).<br><br>
+            <strong>Ellepijp (Ulna):</strong> Loopt aan de kant van de <em>pink</em> en vormt met het 'pijpje' van de elleboog het gewricht!
+          </p>
+        </div>
+
+        <!-- Tibia vs Fibula Mnemonic -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-lg">
+              🦵
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-lg">Scheenbeen vs Kuitbeen</h3>
+              <p class="text-xs text-emerald-400 font-semibold">Onderbeen botten onthouden</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed bg-slate-950 p-3 rounded-lg border border-slate-800">
+            <strong>Scheenbeen (Tibia):</strong> Het grote, sterke bot aan de <em>binnenkant</em> dat je gemakkelijk voelt shinen op je scheen.<br><br>
+            <strong>Kuitbeen (Fibula):</strong> Het dunnere bot aan de <em>buitenkant</em> (denk aan een dunne fobie / fibula).
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    const BONES_DATA = [
+      {
+        id: 'schedel',
+        name: 'Schedel',
+        latin: 'Cranium',
+        category: 'Hoofd',
+        region: 'hoofd',
+        viewBox: '130 10 140 180',
+        desc: 'Beschermt de hersenen en vormt de structuur van het gezicht.',
+        tip: 'Vormt de doos om je hersenen. Bestaat bij volwassenen uit vergroeide schedelbeenderen.'
+      },
+      {
+        id: 'halswervels',
+        name: 'Halswervels',
+        latin: 'Vertebrae cervicales (C1-C7)',
+        category: 'Wervelkolom',
+        region: 'hoofd',
+        viewBox: '140 100 120 120',
+        desc: 'De bovenste 7 wervels van de wervelkolom die het hoofd ondersteunen en laten draaien.',
+        tip: 'Eettijdenregel: Ontbijten om 7 uur -> 7 Halswervels (C1 t/m C7).'
+      },
+      {
+        id: 'sleutelbeen',
+        name: 'Sleutelbeen',
+        latin: 'Clavicula',
+        category: 'Schoudergordel',
+        region: 'borstkas',
+        viewBox: '110 140 180 120',
+        desc: 'Verbindt het borstbeen met het schouderblad en stabiliseert de arm.',
+        tip: 'Sleutelbeen is het S-vormige bot dat als sleutel tussen je borstkas en schouder ligt.'
+      },
+      {
+        id: 'schouderblad',
+        name: 'Schouderblad',
+        latin: 'Scapula',
+        category: 'Schoudergordel',
+        region: 'borstkas',
+        viewBox: '100 150 200 140',
+        desc: 'Plat driehoekig bot aan de rugzijde dat spieraanhechting biedt voor de arm.',
+        tip: 'Platte vleugels op je rug. Biedt grote kom voor de kogel van de opperarm.'
+      },
+      {
+        id: 'borstwervels',
+        name: 'Borstwervels',
+        latin: 'Vertebrae thoracicae (T1-T12)',
+        category: 'Wervelkolom',
+        region: 'wervelkolom',
+        viewBox: '140 160 120 150',
+        desc: '12 wervels waaraan de ribben zijn bevestigd.',
+        tip: 'Eettijdenregel: Lunchen om 12 uur -> 12 Borstwervels waaraan 12 paar ribben vastzitten.'
+      },
+      {
+        id: 'ribben',
+        name: 'Ribben',
+        latin: 'Costae',
+        category: 'Borstkas',
+        region: 'borstkas',
+        viewBox: '110 160 180 140',
+        desc: 'Beschermen hart en longen en maken ademhaling door vormverandering mogelijk.',
+        tip: '12 paar ribben die samen de borstkas (thoracale korf) vormen.'
+      },
+      {
+        id: 'borstbeen',
+        name: 'Borstbeen',
+        latin: 'Sternum',
+        category: 'Borstkas',
+        region: 'borstkas',
+        viewBox: '140 160 120 130',
+        desc: 'Plat bot aan de voorzijde van de borstkas waaraan de ribben hechten.',
+        tip: 'Lijkt op een stropdas of zwaard in het midden van je borstkas.'
+      },
+      {
+        id: 'lendewervels',
+        name: 'Lendewervels',
+        latin: 'Vertebrae lumbales (L1-L5)',
+        category: 'Wervelkolom',
+        region: 'wervelkolom',
+        viewBox: '140 250 120 120',
+        desc: '5 stevige wervels in de onderrug die het meeste gewicht dragen.',
+        tip: 'Eettijdenregel: Avondeten om 5 uur -> 5 stevige Lumbale Lendewervels.'
+      },
+      {
+        id: 'heupbeen',
+        name: 'Heupbeen',
+        latin: 'Os coxae',
+        category: 'Bekken',
+        region: 'bekkenbeen',
+        viewBox: '110 300 180 140',
+        desc: 'Groot stevig bot dat samen met het heiligbeen de bekkengordel vormt.',
+        tip: 'Bestaat uit darmbeen, zitbeen en schaambeen die tot één geheel zijn vergroeid.'
+      },
+      {
+        id: 'heiligbeen',
+        name: 'Heiligbeen',
+        latin: 'Os sacrum',
+        category: 'Bekken / Wervelkolom',
+        region: 'bekkenbeen',
+        viewBox: '140 310 120 110',
+        desc: 'Vijf vergroeide wervels die een wigvormig bot vormen tussen de heupbeenderen.',
+        tip: 'Sacrum betekent heilig in het Latijn; driehoekig bot aan de achterzijde van de bekkenring.'
+      },
+      {
+        id: 'staartbeen',
+        name: 'Staartbeen',
+        latin: 'Os coccygis',
+        category: 'Bekken / Wervelkolom',
+        region: 'bekkenbeen',
+        viewBox: '150 360 100 80',
+        desc: 'Het onderste restant van de wervelkolom (3 tot 5 vergroeide werveltjes).',
+        tip: 'Relict uit onze evolutie (de staart). Heel pijnlijk als je er hard op valt!'
+      },
+      {
+        id: 'opperarmbeen',
+        name: 'Opperarmbeen',
+        latin: 'Humerus',
+        category: 'Armen',
+        region: 'armhand',
+        viewBox: '80 170 240 140',
+        desc: 'Pijpbeen van de bovenarm tussen schoudergewricht en elleboog.',
+        tip: 'Humerus klinkt als humorous (humor) -> vandaar je "telefoonbotje" of gekke been.'
+      },
+      {
+        id: 'spaakbeen',
+        name: 'Spaakbeen',
+        latin: 'Radius',
+        category: 'Armen',
+        region: 'armhand',
+        viewBox: '70 260 260 120',
+        desc: 'Onderarmbot aan de zijde van de duim. Draait om de ellepijp heen.',
+        tip: 'Spaakbeen wijst naar de DUIM (spaken van een stuur dat je met de duim vasthoudt).'
+      },
+      {
+        id: 'ellepijp',
+        name: 'Ellepijp',
+        latin: 'Ulna',
+        category: 'Armen',
+        region: 'armhand',
+        viewBox: '70 260 260 120',
+        desc: 'Onderarmbot aan de zijde van de pink met een grote haak voor de elleboog.',
+        tip: 'Ellepijp zit aan de kant van de PINK en heeft het pijpje op de elleboog.'
+      },
+      {
+        id: 'handwortelbeentjes',
+        name: 'Handwortelbeentjes',
+        latin: 'Ossa carpi (8 stuks)',
+        category: 'Handen',
+        region: 'armhand',
+        viewBox: '60 340 280 100',
+        desc: '8 kleine botjes in de pols die soepele bewegingen van de hand mogelijk maken.',
+        tip: '8 kleine dobbelsteenachtige botjes in de pols.'
+      },
+      {
+        id: 'middenhandsbeentjes',
+        name: 'Middenhandsbeentjes',
+        latin: 'Ossa metacarpi (5 stuks)',
+        category: 'Handen',
+        region: 'armhand',
+        viewBox: '50 350 300 100',
+        desc: '5 langwerpige pijpbeentjes die de palm van de hand vormen.',
+        tip: 'Zitten in je handpalm tussen pols en vingers.'
+      },
+      {
+        id: 'vingerkootjes',
+        name: 'Vingerkootjes',
+        latin: 'Phalanges manus',
+        category: 'Handen',
+        region: 'armhand',
+        viewBox: '40 370 320 110',
+        desc: 'De botjes van de vingers (3 per vinger, 2 in de duim = 14 kootjes per hand).',
+        tip: 'Kootjes = gewrichtjes van je vingers. 14 kootjes per hand.'
+      },
+      {
+        id: 'dijbeen',
+        name: 'Dijbeen',
+        latin: 'Femur',
+        category: 'Benen',
+        region: 'bekkenbeen',
+        viewBox: '120 380 160 180',
+        desc: 'Het langste, zwaarste en sterkste pijpbeen van het menselijk lichaam.',
+        tip: 'Femur is het langste en sterkste bot van je lichaam in het bovenbeen.'
+      },
+      {
+        id: 'knieschijf',
+        name: 'Knieschijf',
+        latin: 'Patella',
+        category: 'Benen',
+        region: 'bekkenbeen',
+        viewBox: '130 520 140 80',
+        desc: 'Sesambeen aan de voorzijde van het kniegewricht dat de pees beschermt.',
+        tip: 'Plat afgerond schijfje dat je kniepezen beschermt bij het buigen.'
+      },
+      {
+        id: 'scheenbeen',
+        name: 'Scheenbeen',
+        latin: 'Tibia',
+        category: 'Benen',
+        region: 'bekkenbeen',
+        viewBox: '110 540 180 180',
+        desc: 'Het grote dragende pijpbeen van het onderbeen aan de binnenzijde.',
+        tip: 'Tibia = Scheenbeen: het grote voelbare bot aan de binnenkant van je scheen.'
+      },
+      {
+        id: 'kuitbeen',
+        name: 'Kuitbeen',
+        latin: 'Fibula',
+        category: 'Benen',
+        region: 'bekkenbeen',
+        viewBox: '110 540 180 180',
+        desc: 'Het dunnere pijpbeen aan de buitenzijde van het onderbeen.',
+        tip: 'Fibula = Kuitbeen: het smalle bot aan de buitenkant naast het scheenbeen.'
+      }
+    ];
+
+    // App Global State
+    let audioEnabled = true;
+    let currentTab = 'quiz';
+    let unlockedLevel = 1; // 1: Quiz, 2: Pinpoint (Unlocked when Level 1 complete)
+    let quizMode = 'adaptive'; // 'adaptive' or 'random'
+    
+    // Level 1 Quiz State
+    let quizTotal = 0;
+    let quizLives = 3;
+    let quizStreak = 0;
+    let currentQuizBone = null;
+    let mistakesQueue = []; // Bone IDs for Spaced Repetition
+    let masteredQuizBones = new Set(); // Tracks unique bones answered correctly at least 1 time
+    let isQuestionLocked = false;
+
+    // Level 2 Pinpoint State
+    let currentPinpointBone = null;
+    let level2FoundBones = new Set(); // Tracks bones correctly clicked in Level 2
+
+    // Web Audio Synthesizer for sound effects
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playSound(type) {
+      if (!audioEnabled) return;
+      try {
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1); // E5
+          osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2); // G5
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now); // A3
+          osc.frequency.linearRampToValueAtTime(140, now + 0.25);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'click') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(400, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'victory') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.12);
+          osc.frequency.setValueAtTime(783.99, now + 0.24);
+          osc.frequency.setValueAtTime(1046.50, now + 0.36);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+          osc.start(now);
+          osc.stop(now + 0.6);
+        }
+      } catch (e) {
+        console.warn('Audio play error:', e);
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const statusText = audioEnabled ? 'AAN' : 'UIT';
+      const icon = audioEnabled ? '🔊' : '🔇';
+      document.getElementById('sound-status').innerText = statusText;
+      document.getElementById('sound-icon').innerText = icon;
+      document.getElementById('sound-toggle-btn').innerText = icon;
+    }
+
+    function setSvgViewBox(viewBoxStr) {
+      const svg = document.getElementById('skeleton-svg');
+      svg.setAttribute('viewBox', viewBoxStr);
+    }
+
+    function resetZoom() {
+      setSvgViewBox('0 0 400 780');
+      playSound('click');
+    }
+
+    function manualZoom(factor) {
+      const svg = document.getElementById('skeleton-svg');
+      let current = svg.getAttribute('viewBox').split(' ').map(Number);
+      if (current.length !== 4) current = [0, 0, 400, 780];
+      
+      let [x, y, w, h] = current;
+      let newW = w * factor;
+      let newH = h * factor;
+      
+      if (newW < 80 || newW > 600) return;
+
+      let newX = x + (w - newW) / 2;
+      let newY = y + (h - newH) / 2;
+      setSvgViewBox(`${newX} ${newY} ${newW} ${newH}`);
+      playSound('click');
+    }
+
+    function zoomToRegion(regionName) {
+      playSound('click');
+      if (regionName === 'hoofd') setSvgViewBox('120 10 160 200');
+      else if (regionName === 'borstkas') setSvgViewBox('100 140 200 180');
+      else if (regionName === 'wervelkolom') setSvgViewBox('130 120 140 300');
+      else if (regionName === 'armhand') setSvgViewBox('50 160 300 320');
+      else if (regionName === 'bekkenbeen') setSvgViewBox('100 310 200 420');
+      else resetZoom();
+    }
+
+    function highlightBoneSvg(boneId) {
+      document.querySelectorAll('.bone').forEach(el => el.classList.remove('highlighted', 'correct-flash', 'wrong-flash'));
+      if (!boneId) return;
+      const boneGroup = document.getElementById(`bone-${boneId}`);
+      if (boneGroup) {
+        boneGroup.querySelectorAll('.bone').forEach(el => el.classList.add('highlighted'));
+      }
+    }
+
+    function flashBoneSvg(boneId, isCorrect) {
+      const boneGroup = document.getElementById(`bone-${boneId}`);
+      if (!boneGroup) return;
+      
+      const className = isCorrect ? 'correct-flash' : 'wrong-flash';
+      boneGroup.querySelectorAll('.bone').forEach(el => {
+        el.classList.remove('highlighted');
+        el.classList.add(className);
+      });
+
+      setTimeout(() => {
+        boneGroup.querySelectorAll('.bone').forEach(el => el.classList.remove(className));
+      }, 700);
+    }
+
+    function switchTab(tabId) {
+      playSound('click');
+      currentTab = tabId;
+
+      // Hide all tab contents
+      ['quiz', 'pinpoint', 'explore', 'tips'].forEach(id => {
+        const content = document.getElementById(`tab-content-${id}`);
+        const btn = document.getElementById(`tab-btn-${id}`);
+        if (content) content.classList.add('hidden');
+        if (btn) {
+          btn.classList.remove('bg-emerald-500', 'text-slate-950', 'shadow');
+          btn.classList.add('text-slate-300');
+        }
+      });
+
+      // Show selected tab content
+      const activeContent = document.getElementById(`tab-content-${tabId}`);
+      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.classList.add('bg-emerald-500', 'text-slate-950', 'shadow');
+        activeBtn.classList.remove('text-slate-300');
+      }
+
+      // Tab specific logic
+      if (tabId === 'quiz') {
+        if (!currentQuizBone) nextQuizQuestion();
+      } else if (tabId === 'pinpoint') {
+        if (unlockedLevel < 2) {
+          document.getElementById('level2-locked-card').classList.remove('hidden');
+          document.getElementById('level2-active-card').classList.add('hidden');
+          document.getElementById('level2-completion-card').classList.add('hidden');
+          highlightBoneSvg(null);
+          resetZoom();
+        } else {
+          document.getElementById('level2-locked-card').classList.add('hidden');
+          if (level2FoundBones.size >= BONES_DATA.length) {
+            document.getElementById('level2-active-card').classList.add('hidden');
+            document.getElementById('level2-completion-card').classList.remove('hidden');
+          } else {
+            document.getElementById('level2-active-card').classList.remove('hidden');
+            document.getElementById('level2-completion-card').classList.add('hidden');
+            if (!currentPinpointBone) nextPinpointQuestion();
+          }
+        }
+      } else if (tabId === 'explore') {
+        populateExploreTab();
+      }
+    }
+
+    function setQuizMode(mode) {
+      quizMode = mode;
+      playSound('click');
+      
+      const btnAdaptive = document.getElementById('mode-btn-adaptive');
+      const btnRandom = document.getElementById('mode-btn-random');
+      
+      if (mode === 'adaptive') {
+        btnAdaptive.className = 'px-3 py-1 rounded-lg text-xs font-bold transition bg-emerald-500 text-slate-950 shadow';
+        btnRandom.className = 'px-3 py-1 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white';
+      } else {
+        btnRandom.className = 'px-3 py-1 rounded-lg text-xs font-bold transition bg-emerald-500 text-slate-950 shadow';
+        btnAdaptive.className = 'px-3 py-1 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white';
+      }
+    }
+
+    function updateQuizUI() {
+      document.getElementById('quiz-mastered-count').innerText = masteredQuizBones.size;
+      document.getElementById('quiz-streak').innerText = quizStreak;
+      document.getElementById('quiz-mistakes-count').innerText = mistakesQueue.length;
+
+      // Hearts / Lives
+      let heartsHtml = '';
+      for (let i = 0; i < 3; i++) {
+        heartsHtml += i < quizLives ? '💀' : '🖤';
+      }
+      document.getElementById('quiz-lives').innerHTML = heartsHtml;
+    }
+
+    function restartQuiz() {
+      playSound('click');
+      quizTotal = 0;
+      quizLives = 3;
+      quizStreak = 0;
+      mistakesQueue = [];
+      masteredQuizBones.clear();
+      isQuestionLocked = false;
+
+      document.getElementById('quiz-gameover-card').classList.add('hidden');
+      document.getElementById('quiz-completion-card').classList.add('hidden');
+      document.getElementById('quiz-question-box').classList.remove('hidden');
+
+      updateQuizUI();
+      nextQuizQuestion();
+    }
+
+    function nextQuizQuestion() {
+      isQuestionLocked = false;
+      document.getElementById('quiz-feedback').classList.add('hidden');
+
+      if (quizLives <= 0) {
+        document.getElementById('quiz-question-box').classList.add('hidden');
+        document.getElementById('quiz-gameover-card').classList.remove('hidden');
+        playSound('wrong');
+        return;
+      }
+
+      // Check Level 1 Completion: All 21 bones must be correctly answered at least once
+      if (masteredQuizBones.size >= BONES_DATA.length) {
+        unlockedLevel = Math.max(unlockedLevel, 2);
+        
+        // Update Level 2 Tab indicator
+        document.getElementById('level2-lock-icon').innerText = '🎯';
+        const pinpointTabBtn = document.getElementById('tab-btn-pinpoint');
+        pinpointTabBtn.classList.remove('text-slate-400');
+        pinpointTabBtn.classList.add('text-slate-100');
+
+        document.getElementById('quiz-question-box').classList.add('hidden');
+        document.getElementById('quiz-completion-card').classList.remove('hidden');
+        playSound('victory');
+        return;
+      }
+
+      // Adaptive selection vs Random selection
+      let selectedBone = null;
+      let isRepeatQuestion = false;
+
+      if (quizMode === 'adaptive' && mistakesQueue.length > 0 && Math.random() < 0.6) {
+        const id = mistakesQueue.shift();
+        selectedBone = BONES_DATA.find(b => b.id === id);
+        isRepeatQuestion = true;
+      } else {
+        const remaining = BONES_DATA.filter(b => !masteredQuizBones.has(b.id));
+        if (remaining.length > 0) {
+          selectedBone = remaining[Math.floor(Math.random() * remaining.length)];
+        } else {
+          selectedBone = BONES_DATA[Math.floor(Math.random() * BONES_DATA.length)];
+        }
+      }
+
+      currentQuizBone = selectedBone;
+      
+      highlightBoneSvg(selectedBone.id);
+      if (selectedBone.viewBox) {
+        setSvgViewBox(selectedBone.viewBox);
+      }
+
+      // Repeat Badge Notice
+      const repeatBadge = document.getElementById('repeat-notice-badge');
+      if (isRepeatQuestion) {
+        repeatBadge.classList.remove('hidden');
+        repeatBadge.classList.add('flex');
+      } else {
+        repeatBadge.classList.add('hidden');
+        repeatBadge.classList.remove('flex');
+      }
+
+      document.getElementById('question-number').innerText = quizTotal + 1;
+
+      // Answer choices (1 correct, 3 distractors)
+      const distractors = BONES_DATA.filter(b => b.id !== selectedBone.id);
+      const shuffledDistractors = distractors.sort(() => 0.5 - Math.random()).slice(0, 3);
+      const options = [selectedBone, ...shuffledDistractors].sort(() => 0.5 - Math.random());
+
+      const optionsContainer = document.getElementById('quiz-options');
+      optionsContainer.innerHTML = '';
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left p-4 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-100 font-bold transition flex items-center justify-between group';
+        btn.innerHTML = `<span>${opt.name}</span>`;
+        btn.onclick = () => handleQuizAnswer(opt.id, btn);
+        optionsContainer.appendChild(btn);
+      });
+
+      updateQuizUI();
+    }
+
+    function handleQuizAnswer(selectedId, btnElement) {
+      if (isQuestionLocked) return;
+      isQuestionLocked = true;
+      quizTotal++;
+
+      const isCorrect = selectedId === currentQuizBone.id;
+      const feedbackBanner = document.getElementById('quiz-feedback');
+      const feedbackIcon = document.getElementById('feedback-icon');
+      const feedbackText = document.getElementById('feedback-text');
+
+      flashBoneSvg(currentQuizBone.id, isCorrect);
+
+      if (isCorrect) {
+        playSound('correct');
+        quizStreak++;
+        masteredQuizBones.add(currentQuizBone.id);
+
+        btnElement.classList.remove('bg-slate-950', 'border-slate-800');
+        btnElement.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-300');
+
+        feedbackBanner.className = 'p-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 flex items-center gap-3';
+        feedbackIcon.className = 'w-6 h-6 rounded-full bg-emerald-400 flex items-center justify-center text-slate-950 font-bold text-xs shrink-0';
+        feedbackIcon.innerText = '✓';
+        feedbackText.innerHTML = `<strong>Uitstekend!</strong> Het juiste antwoord is inderdaad <em>${currentQuizBone.name}</em> (${currentQuizBone.latin}).`;
+      } else {
+        playSound('wrong');
+        quizLives--;
+        quizStreak = 0;
+        
+        if (!mistakesQueue.includes(currentQuizBone.id)) {
+          mistakesQueue.push(currentQuizBone.id);
+        }
+
+        btnElement.classList.remove('bg-slate-950', 'border-slate-800');
+        btnElement.classList.add('bg-rose-500/20', 'border-rose-500', 'text-rose-300');
+
+        feedbackBanner.className = 'p-4 rounded-xl border border-rose-500/40 bg-rose-500/10 text-rose-300 flex items-center gap-3';
+        feedbackIcon.className = 'w-6 h-6 rounded-full bg-rose-500 flex items-center justify-center text-white font-bold text-xs shrink-0';
+        feedbackIcon.innerText = '✕';
+        feedbackText.innerHTML = `<strong>Helaas!</strong> Dat was onjuist. Het juiste antwoord was <strong>${currentQuizBone.name}</strong>.<br><span class="text-xs italic text-rose-200">💡 Tip: ${currentQuizBone.tip}</span>`;
+      }
+
+      feedbackBanner.classList.remove('hidden');
+      updateQuizUI();
+
+      setTimeout(() => {
+        nextQuizQuestion();
+      }, 1600);
+    }
+
+    function unlockAndStartLevel2() {
+      unlockedLevel = 2;
+      switchTab('pinpoint');
+    }
+
+    function nextPinpointQuestion() {
+      highlightBoneSvg(null);
+      resetZoom();
+      
+      if (level2FoundBones.size >= BONES_DATA.length) {
+        document.getElementById('level2-active-card').classList.add('hidden');
+        document.getElementById('level2-completion-card').classList.remove('hidden');
+        playSound('victory');
+        return;
+      }
+
+      const unclickedBones = BONES_DATA.filter(b => !level2FoundBones.has(b.id));
+      const randomBone = unclickedBones[Math.floor(Math.random() * unclickedBones.length)];
+      currentPinpointBone = randomBone;
+
+      document.getElementById('pinpoint-target-name').innerText = randomBone.name;
+      document.getElementById('pinpoint-found-count').innerText = level2FoundBones.size;
+      
+      const feedback = document.getElementById('pinpoint-feedback');
+      feedback.classList.add('hidden');
+    }
+
+    function handleBoneClick(boneId) {
+      playSound('click');
+
+      if (currentTab === 'pinpoint') {
+        if (unlockedLevel < 2) return;
+        if (!currentPinpointBone) return;
+
+        const feedback = document.getElementById('pinpoint-feedback');
+        feedback.classList.remove('hidden');
+
+        if (boneId === currentPinpointBone.id) {
+          playSound('correct');
+          level2FoundBones.add(boneId);
+          flashBoneSvg(boneId, true);
+          
+          feedback.className = 'p-3.5 rounded-xl text-xs font-bold text-center bg-emerald-500/20 border border-emerald-500 text-emerald-300';
+          feedback.innerText = `🎉 Uitstekend! Dat is inderdaad de ${currentPinpointBone.name}! (${level2FoundBones.size}/21 botten)`;
+
+          setTimeout(() => {
+            nextPinpointQuestion();
+          }, 1100);
+        } else {
+          playSound('wrong');
+          flashBoneSvg(boneId, false);
+          
+          const clickedBone = BONES_DATA.find(b => b.id === boneId);
+          feedback.className = 'p-3.5 rounded-xl text-xs font-bold text-center bg-rose-500/20 border border-rose-500 text-rose-300';
+          feedback.innerText = `❌ Oeps! Je klikte op de ${clickedBone ? clickedBone.name : 'een ander bot'}. Zoek en klik op de ${currentPinpointBone.name}!`;
+        }
+        document.getElementById('pinpoint-found-count').innerText = level2FoundBones.size;
+      } else if (currentTab === 'explore') {
+        handleExploreSelect(boneId);
+      }
+    }
+
+    function restartLevel2() {
+      playSound('click');
+      level2FoundBones.clear();
+      document.getElementById('level2-completion-card').classList.add('hidden');
+      document.getElementById('level2-active-card').classList.remove('hidden');
+      nextPinpointQuestion();
+    }
+
+    function populateExploreTab() {
+      const select = document.getElementById('explore-select');
+      const grid = document.getElementById('explore-grid');
+
+      if (select.children.length <= 1) {
+        BONES_DATA.forEach(bone => {
+          const opt = document.createElement('option');
+          opt.value = bone.id;
+          opt.innerText = `${bone.name} (${bone.latin})`;
+          select.appendChild(opt);
+
+          const gridBtn = document.createElement('button');
+          gridBtn.className = 'p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-200 text-left transition truncate';
+          gridBtn.innerText = bone.name;
+          gridBtn.onclick = () => handleExploreSelect(bone.id);
+          grid.appendChild(gridBtn);
+        });
+      }
+    }
+
+    function handleExploreSelect(boneId) {
+      if (!boneId) return;
+      playSound('click');
+
+      const bone = BONES_DATA.find(b => b.id === boneId);
+      if (!bone) return;
+
+      highlightBoneSvg(bone.id);
+      if (bone.viewBox) setSvgViewBox(bone.viewBox);
+
+      document.getElementById('explore-select').value = bone.id;
+      document.getElementById('explore-bone-title').innerText = bone.name;
+      document.getElementById('explore-bone-category').innerText = bone.category;
+      document.getElementById('explore-bone-latin').innerText = bone.latin;
+      document.getElementById('explore-bone-desc').innerText = bone.desc;
+      document.getElementById('explore-bone-tip').innerText = bone.tip;
+    }
+
+    // Window Load Initializer
+    window.onload = function() {
+      populateExploreTab();
+      nextQuizQuestion();
+    };
+  </script>
+
+</body></html>
